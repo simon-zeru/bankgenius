@@ -6,7 +6,19 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { FormFieldProps } from '@/types'
+
+import { FieldPath, Control } from "react-hook-form";
+import z from "zod";
+import { authFormSchema } from '@/lib/utils';
+
+const formSchema = authFormSchema('sign-up');
+
+interface FormFieldProps {
+  control: Control<z.infer<typeof formSchema>>;
+  name: FieldPath<z.infer<typeof formSchema>>;  
+  label: string;
+  placeholder: string;
+}
 
 const FormFieldComponent = ({control, name, label, placeholder}: FormFieldProps) => {
   return (
