@@ -22,7 +22,7 @@ import { Divide, Loader2 } from 'lucide-react'
 import FormFieldComponent from './FormFieldComponent'
 import { authFormSchema } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
-import { getLoggedInUser, signUp } from '@/lib/actions/user.actions'
+import { signIn, signUp } from '@/lib/actions/user.actions'
 
 
 
@@ -31,8 +31,9 @@ const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const loggedInUser = await getLoggedInUser();
+
   const formSchema = authFormSchema(type);
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,19 +53,19 @@ const AuthForm = ({ type }: { type: string }) => {
       // Sign up with Appwrite & create plaid token
 
       if (type === 'sign-up') {
-        
-        const newUser = await signUp(data)
 
-        setUser(newUser)
+        const newUser = await signUp(data);
+
+        setUser(newUser);
       } 
 
       if (type === 'sign-in') {
-        // const user = await SignIn({
-        //   email: data.email,
-        //   password: data.password
-        // })
+        const response = await signIn({
+          email: data.email,
+          password: data.password
+        })
 
-        // if (response) router.push('/')
+        if (response) router.push('/')
       }
     } catch (error) {
       console.error(error)
@@ -83,7 +84,7 @@ const AuthForm = ({ type }: { type: string }) => {
             width={34}
             height={34}
           />
-          <h1 className="sidebar-logo text-26 font-ibm-plex-serif font-bold text-black-1">
+          <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">
             BankGenius
           </h1>
         </Link>
