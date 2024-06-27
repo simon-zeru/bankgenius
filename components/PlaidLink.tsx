@@ -1,23 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from './ui/button'
-import { useRouter } from 'next/navigation'
-import { usePlaidLink, PlaidLinkOnSuccess, PlaidLinkOptions } from 'react-plaid-link'
-import { createLinkToken, exchangePublicToken } from '@/lib/actions/user.actions'
+import { PlaidLinkOnSuccess, PlaidLinkOptions, usePlaidLink } from 'react-plaid-link'
+import { useRouter } from 'next/navigation';
+import { createLinkToken, exchangePublicToken } from '@/lib/actions/user.actions';
 
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
-  const router = useRouter()
-  const [token, setToken] = useState('')
+  const router = useRouter();
+
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     const getLinkToken = async () => {
       const data = await createLinkToken(user);
 
-      setToken(data?.link_token)
+      setToken(data?.linkToken);
     }
 
-    getLinkToken()
-  
-  , [user]})
+    getLinkToken();
+  }, [user]);
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token: string) => {
     await exchangePublicToken({
@@ -25,35 +25,35 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
       user,
     })
 
-    router.push('/')
+    router.push('/');
   }, [user])
-
+  
   const config: PlaidLinkOptions = {
     token,
     onSuccess
   }
 
-  const { open, ready } = usePlaidLink(config)
-
+  const { open, ready } = usePlaidLink(config);
+  
   return (
     <>
       {variant === 'primary' ? (
-        <Button 
-          onClick={() => open}
+        <Button
+          onClick={() => open()}
           disabled={!ready}
-          className='plaidlink-primary'
+          className="plaidlink-primary"
         >
-          Connect Bank
+          Connect bank
         </Button>
-        ) : variant === 'ghost' ? (
-          <Button>
-            Connect bank
-          </Button>
-        ) : (
-          <Button>
-            Connect bank
-          </Button>
-        )}
+      ): variant === 'ghost' ? (
+        <Button>
+          Connect bank
+        </Button>
+      ): (
+        <Button>
+          Connect bank
+        </Button>
+      )}
     </>
   )
 }
